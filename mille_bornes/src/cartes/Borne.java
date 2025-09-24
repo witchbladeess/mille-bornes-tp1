@@ -11,8 +11,8 @@ public class Borne extends Carte {
 	}
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return km + "KM";
 	}
 
 	

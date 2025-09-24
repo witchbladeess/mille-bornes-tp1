@@ -3,27 +3,27 @@ package cartes;
 public enum Type {
 	FEU		("Feu rouge",	 "Feu vert", 	"Prioritaire"),
 	ESSENCE	("Panne d'essence", "Bidon d'essence", "Citerne"),
-	CREVAISON("Crevaison", "Increvable", "Roue de secours"),
-	ACCIDENT("Accident", "As du volant", "Réparation");
+	CREVAISON("Crevaison", "Roue de secours", "Increvable"),
+	ACCIDENT("Accident", "RÃ©paration", "As du volant");
 	
-	private final String attaqueLabel;
-	private final String paradeLabel;
-	private final String botteLabel;
+	private final String attaque;
+	private final String parade;
+	private final String botte;
 
 	Type(String attaqueLabel, String paradeLabel, String botteLabel) {
-		this.attaqueLabel=attaqueLabel;
-		this paradeLabel=paradeLabel;
-		this botteLabel=botteLabel;		
+		this.attaque=attaqueLabel;
+		this.parade=paradeLabel;
+		this.botte=botteLabel;		
 	}
 	public String getAttaqueLabel() {
-		return attaqueLabel;
+		return attaque;
 	}
 	public String getParadeLabel() {
-		return paradeLabel ;
+		return parade ;
 	}
 
 	public String getBotteLabel() {
-		return botteLabel ;
+		return botte ;
 	}
 
 }

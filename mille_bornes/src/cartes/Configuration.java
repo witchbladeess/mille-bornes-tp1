@@ -1,8 +1,8 @@
 package cartes;
 
 public class Configuration {
-	private final int nbExemplaires;
-	private final Carte carte;
+	private int nbExemplaires;
+	private Carte carte;
 	
 	public Configuration(Carte carte, int nbExemplaires) {
 		this.nbExemplaires = nbExemplaires;

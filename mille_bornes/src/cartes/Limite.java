@@ -8,8 +8,7 @@ public abstract class Limite extends Carte {
 
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
-		return null;
+		return "Limite 50";
 	}
 
 }
