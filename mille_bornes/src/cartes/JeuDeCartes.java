@@ -18,17 +18,15 @@ public class JeuDeCartes {
 	        new Configuration(new Parade(Type.ACCIDENT), 6),// 6 reparation
 
 	        
-	        new Configuration(new Parade(Type.FEU), 5), // Feu rouge
-	        new Configuration(new DebutLimite(), 4), 
-	        new Configuration(new Parade(Type.ESSENCE), 3), // panne d'essence
-	        new Configuration(new Parade(Type.ESSENCE), 3), // panne d'essence 
-
-	        new Configuration(new Parade(Type.CREVAISON), 3), // 3 crevaison 
-	        new Configuration(new Parade(Type.ACCIDENT), 3), // 3 accident
-	        new Configuration(new Parade(Type.FEU), 1), // 1 prioritaire
-	        new Configuration(new Parade(Type.ESSENCE), 1), // 1 citerne
-	        new Configuration(new Parade(Type.CREVAISON), 1), // 1 increvable
-	        new Configuration(new Parade(Type.ACCIDENT), 1), // 1 as au volant
+	        new Configuration(new Attaque(Type.FEU), 5),          // Feu Rouge  
+	        new Configuration(new DebutLimite(), 4),              // Limite 50
+	        new Configuration(new Attaque(Type.ESSENCE), 3),      // Panne d'essence  
+	        new Configuration(new Attaque(Type.CREVAISON), 3),    // Crevaison     
+	        new Configuration(new Attaque(Type.ACCIDENT), 3),     
+	        new Configuration(new Botte(Type.FEU), 1), // 1 prioritaire
+	        new Configuration(new Botte(Type.ESSENCE), 1), // 1 citerne
+	        new Configuration(new Botte(Type.CREVAISON), 1), // 1 increvable
+	        new Configuration(new Botte(Type.ACCIDENT), 1), // 1 as au volant
 
 	    };
 
