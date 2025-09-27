@@ -32,17 +32,7 @@ public class JeuDeCartes {
 
 	
 	
-	public String afficherJeuDeCartes() {
-		StringBuilder sb = new StringBuilder("JEU : \n");
-		for(Configuration config: typesDeCartes) {
-			sb.append(config.getNbExemplaires());
-			sb.append(' ');
-			sb.append(config.getCarte());
-			sb.append('\n');
-		}
-		return sb.toString();
-	}
-	
+		
 	public Carte[] donnerCartes() {
 		int total = 0;
 		for(Configuration config: typesDeCartes) {
@@ -59,5 +49,32 @@ public class JeuDeCartes {
 		
 		return allCartes;
 		
+	}
+
+	public String affichageJeuCartes() {
+		StringBuilder sb = new StringBuilder("JEU : \n");
+		for(Configuration config: typesDeCartes) {
+			sb.append(config.getNbExemplaires());
+			sb.append(' ');
+			sb.append(config.getCarte());
+			sb.append('\n');
+		}
+		return sb.toString();
+
+	}
+
+	public boolean checkCount() {
+		Carte[] all = donnerCartes();
+		int total = 0;
+		for (Configuration cfg : typesDeCartes) {
+		    int expected = cfg.getNbExemplaires();
+		    total += expected;
+		    int actual = 0;
+		    for (Carte c : all) if (c.equals(cfg.getCarte())) actual++;
+		        if (expected != actual) return false;
+		    }
+		    return all.length == total;
+		}
+
 	} 
-}
+
