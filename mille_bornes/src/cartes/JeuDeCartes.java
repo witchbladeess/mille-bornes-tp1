@@ -49,9 +49,9 @@ public class JeuDeCartes {
 			total+=config.getNbExemplaires();
 		}
 		Carte[] allCartes = new Carte[total];
-		
+		int index = 0;
 		for(Configuration config: typesDeCartes) {
-			int index = 0;
+			
 			for(int i =0; i< config.getNbExemplaires(); i++) {
 				allCartes[index++] = config.getCarte();
 			}
