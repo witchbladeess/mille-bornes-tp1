@@ -40,8 +40,7 @@ public class JeuDeCartes {
 		}
 		Carte[] allCartes = new Carte[total];
 		int index = 0;
-		for(Configuration config: typesDeCartes) {
-			
+		for(Configuration config: typesDeCartes) {			
 			for(int i =0; i< config.getNbExemplaires(); i++) {
 				allCartes[index++] = config.getCarte();
 			}
@@ -64,17 +63,27 @@ public class JeuDeCartes {
 	}
 
 	public boolean checkCount() {
-		Carte[] all = donnerCartes();
-		int total = 0;
-		for (Configuration cfg : typesDeCartes) {
-		    int expected = cfg.getNbExemplaires();
-		    total += expected;
-		    int actual = 0;
-		    for (Carte c : all) if (c.equals(cfg.getCarte())) actual++;
-		        if (expected != actual) return false;
-		    }
-		    return all.length == total;
-		}
+	    Carte[] all = donnerCartes();
+	    int total = 0;
+	    for (Configuration config : typesDeCartes) {
+	        total += config.getNbExemplaires();
+	    }
+	    if (all.length != total) return false;
+
+	    for (Configuration cfg : typesDeCartes) {
+	        int expected = cfg.getNbExemplaires();
+	        int actual = 0;
+	        for (Carte carte : all) {
+	            if (carte.equals(cfg.getCarte())) {
+	                actual++;
+	            }
+	        }
+	        if (expected != actual) return false;
+	    }
+
+	    return true;
+	}
+
 
 	} 
 

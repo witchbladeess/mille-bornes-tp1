@@ -9,6 +9,8 @@ public class TestJeuDeCartes {
 		
         if (!jeu.checkCount()) {
             System.out.println("erreur de nombre");
+        } else {
+        	System.out.println("tous les comptes sont corrects");
         }
 
 	}

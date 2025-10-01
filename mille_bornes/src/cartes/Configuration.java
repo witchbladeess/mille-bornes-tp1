@@ -7,7 +7,6 @@ public class Configuration {
 	public Configuration(Carte carte, int nbExemplaires) {
 		this.nbExemplaires = nbExemplaires;
 		this.carte=carte;
-		// TODO Auto-generated constructor stub
 	}
 	public Carte getCarte() {
 		return carte;

@@ -19,5 +19,11 @@ public abstract class Probleme extends Carte {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	@Override
+	public boolean equals(Object obj) {
+		if(!super.equals(obj)) return false;
+		if(!(obj instanceof Probleme prob)) return false;
+		return this.type==prob.type;
+	}
 
 }

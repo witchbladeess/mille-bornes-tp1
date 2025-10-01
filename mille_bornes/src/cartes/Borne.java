@@ -6,15 +6,17 @@ public class Borne extends Carte {
 	public Borne(int km) {
 		this.km=km;
 	}
-	public Borne() {
-		// TODO Auto-generated constructor stub
-	}
 	@Override
 	public String toString() {
 		
 		return km + "KM";
 	}
 
-	
+	@Override
+	public boolean equals(Object obj) {
+		if(!super.equals(obj)) return false;
+		if(!(obj instanceof Borne borne)) return false;
+		return this.km == borne.km;
+	}
 
 }
