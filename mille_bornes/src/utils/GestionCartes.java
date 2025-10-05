@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Objects;
 import java.util.Random;
 
 public class GestionCartes {
@@ -66,11 +67,49 @@ public class GestionCartes {
 		 }
 		 return result;
 	 }
+	 
+	 public static <T> List<T> rassemblerV2(List<T> liste) {
+		    List<T> result = new ArrayList<>();
+		    for (T element : liste) {
+		        ListIterator<T> it = result.listIterator(result.size());
+		        int insertPos = -1;
+		        while (it.hasPrevious()) {
+		            if (Objects.equals(it.previous(), element)) {
+		                insertPos = it.nextIndex() + 1;
+		                break;
+		            }
+		        }
+		        if (insertPos < 0) result.add(element);
+		        else result.add(insertPos, element);
+		    }
+		    return result;
+		}
+
+	 
+	 
 	 public static <T> boolean verifierRassemblement(List<T> liste) {
 		 if (liste.size() <= 1) return true;
 		 ListIterator<T> iterator1 = liste.listIterator();
-		 
+		 T previous = iterator1.next(); 
+		 while(iterator1.hasNext()){
+			 T current = iterator1.next();
+			 if(!Objects.equals(current, previous)) {
+				 ListIterator<T> iterator2 = liste.listIterator(iterator1.nextIndex());
+				 while(iterator2.hasNext()) {
+					 if(Objects.equals(previous, iterator2.next())) {
+						 return false;
+					 }
+				 }
+				 previous = current;
+			 }
+		 }
+		return true;
+ 
 		 
 	 }
-	 
+	 //méthode statique générique
+	 //pour réaliser le test
+	 public static <T> boolean memeComptage(List<T> a, List<T> b) {
+		 return verifierMelange(a, b);
+	 }
 }

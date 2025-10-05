@@ -2,10 +2,10 @@ package testsFonctionnels;
 
 import java.util.Iterator;
 
-import cartes.Botte;
+//import cartes.Botte;
 import cartes.Carte;
 import cartes.JeuDeCartes;
-import cartes.Type;
+//import cartes.Type;
 import jeu.Sabot;
 
 public class TestSabot {
