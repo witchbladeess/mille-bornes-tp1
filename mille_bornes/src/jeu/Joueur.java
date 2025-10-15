@@ -28,6 +28,10 @@ public class Joueur {
 	public void deposer(Carte c) {
 		zone.deposer(c);
 	}
+	public boolean estDepotAutorise(Carte carte) {
+	    return zone.estDepotAutorise(carte);
+	}
+
 	
 	@Override
 	public boolean equals(Object obj) {
