@@ -9,4 +9,5 @@ public abstract class Carte {
 		if(getClass()!=obj.getClass()) return false;
 		return true;
 	}
+	
 }

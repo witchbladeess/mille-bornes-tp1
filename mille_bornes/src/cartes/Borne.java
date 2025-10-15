@@ -9,14 +9,16 @@ public class Borne extends Carte {
 	@Override
 	public String toString() {
 		
-		return km + "KM";
+		return getKm() + "KM";
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if(!super.equals(obj)) return false;
-		if(!(obj instanceof Borne borne)) return false;
-		return this.km == borne.km;
+		return this.getKm() == ((Borne) obj).getKm();
+	}
+	public int getKm() {
+		return km;
 	}
 
 }
