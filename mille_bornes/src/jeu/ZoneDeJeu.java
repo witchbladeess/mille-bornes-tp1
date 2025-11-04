@@ -76,15 +76,16 @@ public class ZoneDeJeu {
 	    }
 	    return false;
 	}
-	private boolean estBloque() {
+		private boolean estSommetFeuVert() {
 	    if (pileBataille.isEmpty()) return false;
-	    Probleme sommet = pileBataille.get(pileBataille.size() - 1);
-	    return sommet instanceof Attaque;
+	    Probleme s = pileBataille.get(pileBataille.size() - 1);
+	    return (s instanceof Parade) && s.getType() == Type.FEU;
 	}
+
 
 	private boolean estDepotBatailleAutorise(Probleme bataille) { 
 	    if (bataille instanceof Attaque) {
-	        return !estBloque();
+	        return estSommetFeuVert();
 	    }
 	    
 	    Parade p = (Parade) bataille;
