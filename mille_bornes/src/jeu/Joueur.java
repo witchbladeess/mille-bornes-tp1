@@ -1,26 +1,41 @@
 package jeu;
 
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Random;
+import java.util.List;
 import java.util.Set;
 
+import cartes.Attaque;
+import cartes.Borne;
+import cartes.Botte;
 import cartes.Carte;
+import cartes.DebutLimite;
+import cartes.FinLimite;
+import cartes.Parade;
+import cartes.Type;
+import strategies.Strategie;
 
-public class Joueur {
+public class Joueur implements Comparable<Joueur>
+{
 	private String nom;
 	private ZoneDeJeu zone;
 	private MainJoueur main;
+	private Strategie strategie;
+
 	
 	public Joueur(String nom) {
-		this.nom=nom;
+		this.nom = nom;
 		this.zone = new ZoneDeJeu();
 		this.main = new MainJoueur();
+		this.strategie = new Strategie() { };
+
 	}
+	
 	public void donner(Carte c) {
 		main.prendre(c);
 	}
-	public MainJoueur getMain() {
-	    return main;
+	public void setStrategie(Strategie strategie) {
+	    this.strategie = strategie;
 	}
 
 	
@@ -30,100 +45,201 @@ public class Joueur {
 		main.prendre(c);
 		return c;
 	}
-	public int DonnerKmParcours() {
+	
+	public int donnerKmParcours() {
 		return zone.donnerKmParcours();
 	}
+	
 	public void deposer(Carte c) {
 		zone.deposer(c);
 	}
+	
 	public boolean estDepotAutorise(Carte carte) {
 	    return zone.estDepotAutorise(carte);
 	}
-	public Set<Coup> coupsPossibles(Set<Joueur> participants) {
-		Set<Coup> res = new HashSet<>();
-		for(Carte c : main) {
-			Coup versSabot = new Coup(this, c, null);
-			if(versSabot.estValide()) res.add(versSabot);
-			for (Joueur cible : participants) {
-				Coup coup = new Coup(this, c, cible);
-				if(coup.estValide()) res.add(coup);
-			}
-		}
-		return res;		
-	}
-	public Set<Coup> coupsDefausse(){
-		Set <Coup> defausse = new HashSet<>();
-		for(Carte carte : main) {
-			Coup coup = new Coup(this, carte, null);
-			defausse.add(coup);
-		}
-		return defausse;
-	}
+	
 	public void retirerDeLaMain(Carte carte) {
 		main.jouer(carte);
 	}
-	public Coup choisirCoup(Set<Joueur> participants) {
-        Set<Coup> possibles = coupsPossibles(participants);
-
-        if (!possibles.isEmpty()) {
-            return choisirAleatoirement(possibles);
-        } else {
-            Set<Coup> defausse = coupsDefausse();
-            return choisirAleatoirement(defausse);
-        }
-    }
-	private Coup choisirAleatoirement(Set<Coup> ensemble) {
-        int taille = ensemble.size();
-        if (taille == 0) return null;
-
-        int index = new Random().nextInt(taille);
-        int i = 0;
-        for (Coup c : ensemble) {
-            if (i == index) return c;
-            i++;
-        }
-        return null; 
-    }
-
-	public String afficherEtatJoueur() {
-	    StringBuilder etat = new StringBuilder();
-	    etat.append("Joueur : ").append(nom).append("\n");
-
-	    etat.append("Bottes : ");
-	    if (zone.getBottes().isEmpty()) etat.append("aucune");
-	    else etat.append(zone.getBottes());
-	    etat.append("\n");
-
-	    int limite = zone.donnerLimitationVitesse();
-	    boolean limiteActive = (limite == 50);
-	    etat.append("Limitation de vitesse : ").append(limiteActive).append("\n");
-
-	    if (zone.getPileBataille().isEmpty())
-	        etat.append("Sommet bataille : null\n");
-	    else {
-	        etat.append("Sommet bataille : ")
-	            .append(zone.getPileBataille()
-	                    .get(zone.getPileBataille().size() - 1))
-	            .append("\n");
-	    }
-
-	    etat.append("Main : ").append(main.toString());
-
-	    return etat.toString();
+	
+	public Set<Coup> coupsPossibles(Set<Joueur> participants) {
+		Set<Coup> coups = new HashSet<>();
+		for (Carte carte : main) {
+			for (Joueur cible : participants) {
+				Coup coup = new Coup(this, carte, cible);
+				if (coup.estValide()) {
+					coups.add(coup);
+				}
+			}
+		}
+		return coups;
 	}
+	
+	public Set<Coup> coupsDefausse() {
+		Set<Coup> coups = new HashSet<>();
+		for (Carte carte : main) {
+			Coup coup = new Coup(this, carte, null);
+			coups.add(coup);
+		}
+		return coups;
+	}
+	
+	public Coup choisirCoup(Set<Joueur> participants) {
+		Set<Coup> coups = coupsPossibles(participants);
+		
+		if (coups.isEmpty()) {
+		    coups = coupsDefausse();
+		    return strategie.selectionnerDefausse(coups);
+		}
+		
+		if (!zone.peutAvancer()) {
+			Coup coupFeuVert = trouverCoupFeuVert(coups);
+			if (coupFeuVert != null) return coupFeuVert;
+		}
+		
+		Coup coupBorne = trouverCoupType(coups, Borne.class, true);
+		if (coupBorne != null) return coupBorne;
+		
+		Coup coupAttaque = trouverCoupAttaque(coups);
+		if (coupAttaque != null) return coupAttaque;
+		
+		Coup coupFeuVert = trouverCoupFeuVert(coups);
+		if (coupFeuVert != null) return coupFeuVert;
+		
+		Coup coupParade = trouverCoupParadeAutre(coups);
+		if (coupParade != null) return coupParade;
+		
+		Coup coupFinLimite = trouverCoupType(coups, FinLimite.class, true);
+		if (coupFinLimite != null) return coupFinLimite;
+		
+		Coup coupBotte = trouverCoupType(coups, Botte.class, true);
+		if (coupBotte != null) return coupBotte;
+		
+		return strategie.selectionnerCoup(coups);
 
+	}
+	
+	private Coup trouverCoupType(Set<Coup> coups, Class<?> classe, boolean surSoiMeme) {
+		List<Coup> coupsCorrespondants = new ArrayList<>();
+		
+		for (Coup coup : coups) {
+			if (classe.isInstance(coup.getCarteJouee())) {
+				if (surSoiMeme && coup.getJoueurCible() != null && coup.getJoueurCible().equals(this)) {
+					coupsCorrespondants.add(coup);
+				} else if (!surSoiMeme && coup.getJoueurCible() != null && !coup.getJoueurCible().equals(this)) {
+					coupsCorrespondants.add(coup);
+				}
+			}
+		}
+		
+		if (!coupsCorrespondants.isEmpty() && classe == Borne.class) {
+			Coup meilleurCoup = coupsCorrespondants.get(0);
+			int maxKm = ((Borne) meilleurCoup.getCarteJouee()).getKm();
+			
+			for (Coup coup : coupsCorrespondants) {
+				int km = ((Borne) coup.getCarteJouee()).getKm();
+				if (km > maxKm) {
+					maxKm = km;
+					meilleurCoup = coup;
+				}
+			}
+			return meilleurCoup;
+		}
+		
+		return coupsCorrespondants.isEmpty() ? null : coupsCorrespondants.get(0);
+	}
+	
+	private Coup trouverCoupAttaque(Set<Coup> coups) {
+		for (Coup coup : coups) {
+			if ((coup.getCarteJouee() instanceof Attaque || coup.getCarteJouee() instanceof DebutLimite)
+				&& coup.getJoueurCible() != null 
+				&& !coup.getJoueurCible().equals(this)) {
+				return coup;
+			}
+		}
+		return null;
+	}
+	
+	private Coup trouverCoupFeuVert(Set<Coup> coups) {
+		for (Coup coup : coups) {
+			if (coup.getCarteJouee() instanceof Parade) {
+				Parade parade = (Parade) coup.getCarteJouee();
+				if (parade.getType() == Type.FEU 
+					&& coup.getJoueurCible() != null 
+					&& coup.getJoueurCible().equals(this)) {
+					return coup;
+				}
+			}
+		}
+		return null;
+	}
+	
+	private Coup trouverCoupParadeAutre(Set<Coup> coups) {
+		for (Coup coup : coups) {
+			if (coup.getCarteJouee() instanceof Parade) {
+				Parade parade = (Parade) coup.getCarteJouee();
+				if (parade.getType() != Type.FEU 
+					&& coup.getJoueurCible() != null 
+					&& coup.getJoueurCible().equals(this)) {
+					return coup;
+				}
+			}
+		}
+		return null;
+	}
+	
+	
 
-
+	
+	public String afficherEtatJoueur() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(nom).append(" :\n");
+		sb.append("  Bottes : ").append(zone.afficherBottes()).append("\n");
+		sb.append("  Limitation de vitesse : ").append(zone.donnerLimitationVitesse() == 50).append("\n");
+		sb.append("  Sommet pile bataille : ").append(zone.getSommetBataille()).append("\n");
+		sb.append("  Main : ").append(main).append("\n");
+		sb.append("  Km parcourus : ").append(donnerKmParcours()).append(" km");
+		return sb.toString();
+	}
+	
+	public String afficherMain() {
+		return "[" + main.toString() + "]";
+	}
 	
 	@Override
 	public boolean equals(Object obj) {
-		if(obj instanceof Joueur joueuer) {
-			return nom!= null && nom.equals(joueuer.nom);
+		if(obj instanceof Joueur joueur) {
+			return nom != null && nom.equals(joueur.nom);
 		}
 		return false;
 	}
+	
+	@Override
+	public int hashCode() {
+		return nom != null ? nom.hashCode() : 0;
+	}
+	
 	@Override
 	public String toString() {
+		return nom;
+	}
+
+	@Override
+	public int compareTo(Joueur o) {
+	    int diffKm = this.donnerKmParcours() - o.donnerKmParcours();
+	    if (diffKm != 0) return diffKm;
+	    return this.nom.compareTo(o.nom);
+	}
+
+	public Carte donnerSommetPile() {
+		return zone.getSommetBataille();
+	}
+
+	public Set<Botte> donnerBottes() {
+		return zone.donnerBottes();
+	}
+
+	public String getNom() {
 		return nom;
 	}
 }

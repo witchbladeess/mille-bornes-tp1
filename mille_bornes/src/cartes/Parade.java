@@ -1,6 +1,6 @@
 package cartes;
 
-public class Parade extends Bataille {
+public class Parade extends Bataille implements Comparable<Parade> {
 
 	public Parade(Type type) {
 		super(type);
@@ -8,5 +8,9 @@ public class Parade extends Bataille {
 	@Override
 	public String toString() {
 		return getType().getParadeLabel();
+	}
+	public int compareTo(Parade parade2) {
+		return this.getType().compareTo(parade2.getType());
+
 	}
 }
